@@ -53,13 +53,16 @@ function deal() {
 }
 
 function hit() {
-    getCard(playerHand);
-    pointsCheck(playerArr, playerPoints, playerPointsContainer);
-    if (dealerPoints <= 16) {
-        getCard(dealerHand);
-        pointsCheck(dealerArr, dealerPoints, dealerPointsContainer);
+    if (playerPointsContainer.textContent != 'BUST' && dealerPointsContainer.textContent != 'BUST') {
+        getCard(playerHand, playerArr);
+        pointsCheck(playerArr, playerPoints, playerPointsContainer);
+        if (dealerPointsContainer.textContent <= 16) {
+            getCard(dealerHand, dealerArr);
+            pointsCheck(dealerArr, dealerPoints, dealerPointsContainer);
+        }
+    } else {
+        return;
     }
-    return;
 }
 
 function pointsCheck(playerOrDealerArr, playerOrDealerPoints, playerOrDealerPointsContainer) {
@@ -68,11 +71,16 @@ function pointsCheck(playerOrDealerArr, playerOrDealerPoints, playerOrDealerPoin
             playerOrDealerPoints += parseInt(card.face)
         } else if (card.face != 'A') {
             playerOrDealerPoints += 10;
+        } else if (playerOrDealerPoints + 11 > 21){
+            playerOrDealerPoints + 1;
         } else {
             playerOrDealerPoints += 11;
         }
     });
-    playerOrDealerPointsContainer.textContent = `${playerOrDealerPoints} points`;
+    if (playerOrDealerPoints > 21) {
+        playerOrDealerPoints = 'BUST';
+    };
+    playerOrDealerPointsContainer.textContent = playerOrDealerPoints;
 }
 
 // grab random card and remove it from deck
