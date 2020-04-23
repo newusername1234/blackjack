@@ -1,0 +1,28 @@
+body {
+    box-sizing: border-box;
+}
+
+#table {
+    background-color: green;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid black;
+    border-radius: 30px;
+}
+
+#table > * {
+    margin: 10px;
+}
+
+#player-hand,
+#dealer-hand {
+    background-color: lightgreen;
+    height: 100px;
+    width: 80vw;
+}
+
+.card {
+    height: 100px;
+    width: 70px;
+}
