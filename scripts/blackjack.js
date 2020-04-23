@@ -14,8 +14,11 @@ let deck = [
     { face: 'A', suit: 'C' }, { face: 'A', suit: 'S' }, { face: 'A', suit: 'H' }, { face: 'A', suit: 'D' }
 ];
 
-let dealerArr = [];
-let playerArr = [];
+const dealerArr = [];
+const playerArr = [];
+
+let playerPointsContainer = document.getElementById('player-points');
+let dealerPointsContainer = document.getElementById('dealer-points');
 
 const dealerHand = document.getElementById('dealer-hand');
 const playerHand = document.getElementById('player-hand');
@@ -26,33 +29,67 @@ dealButton.addEventListener('click', deal);
 const hitButton = document.getElementById('hit-button');
 hitButton.addEventListener('click', hit);
 
+function calculatePoints(playerOrDealerArr, playerOrDealerPoints) {
+    playerOrDealerArr.forEach(card => points += card)
+}
+
+let playerPoints = 0;
+let dealerPoints = 0;
+
 function deal() {
-    getCard(dealerHand);
-    getCard(dealerHand);
-    getCard(playerHand);
-    getCard(playerHand);
+    if (playerArr.length > 0) {
+        return;
+    }
+    getCard(dealerHand, dealerArr);
+    getCard(dealerHand, dealerArr);
+    getCard(playerHand, playerArr);
+    getCard(playerHand, playerArr);
+    console.log('Player Hand:');
+    console.log(playerArr);
+    console.log('Dealer Hand:');
+    console.log(dealerArr);
+    pointsCheck(playerArr, playerPoints, playerPointsContainer);
+    pointsCheck(dealerArr, dealerPoints, dealerPointsContainer);
 }
 
 function hit() {
-    const card = getCard();
-    playerHand.appendChild(card);
-    playerArr.push(card);
+    getCard(playerHand);
+    pointsCheck(playerArr, playerPoints, playerPointsContainer);
+    if (dealerPoints <= 16) {
+        getCard(dealerHand);
+        pointsCheck(dealerArr, dealerPoints, dealerPointsContainer);
+    }
+    return;
+}
+
+function pointsCheck(playerOrDealerArr, playerOrDealerPoints, playerOrDealerPointsContainer) {
+    playerOrDealerArr.forEach(card => {
+        if (parseInt(card.face)) {
+            playerOrDealerPoints += parseInt(card.face)
+        } else if (card.face != 'A') {
+            playerOrDealerPoints += 10;
+        } else {
+            playerOrDealerPoints += 11;
+        }
+    });
+    playerOrDealerPointsContainer.textContent = `${playerOrDealerPoints} points`;
 }
 
 // grab random card and remove it from deck
-function getCard(playerOrDealerHand) {
-    const cardObj = deck[getRandomIndex(deck.length)];
-    console.log(`${cardObj.face} of ${cardObj.suit}`);
-    let updatedDeck = deck.filter(otherCardsObj => otherCardsObj != cardObj);
+function getCard(playerOrDealerHand, playerOrDealerArr) {
+    const dealtCard = deck[getRandomIndex(deck.length)];
+    console.log(`${dealtCard.face} of ${dealtCard.suit}`);
+    let updatedDeck = deck.filter(card => card != dealtCard);
     deck = updatedDeck;
     const cardElement = document.createElement('img');
     cardElement.setAttribute('class', 'card');
-    cardElement.setAttribute('src', `images/${cardObj.face}${cardObj.suit}.jpg`);
+    cardElement.setAttribute('src', `images/${dealtCard.face}${dealtCard.suit}.jpg`);
     playerOrDealerHand.appendChild(cardElement);
+    playerOrDealerArr.push(dealtCard);
     console.log(`DECK LENGTH: ${deck.length}`);
-    // return cardElement;
 }
 
+// grab a random index for us to use in getCard()
 function getRandomIndex(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
